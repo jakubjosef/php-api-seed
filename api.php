@@ -15,6 +15,13 @@ $app['myService'] = function() {
   require "services/myService.php";
   return new MyService();
 };
+//parse JSON request body
+$app->before(function (Request $request) {
+    if (0 === strpos($request->headers->get('Content-Type'), 'application/json')) {
+        $data = json_decode($request->getContent(), true);
+        $request->request->replace(is_array($data) ? $data : array());
+    }
+});
 //test api
 $app->get(APP_DIRECTORY.'/api/test',function(){
    //some logic with api failing (db connect,etc.)
